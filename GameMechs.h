@@ -6,7 +6,6 @@
 
 #include "objPos.h"
 #include "objPosArrayList.h"
-#include "MacUILib.h"
 
 using namespace std;
 
