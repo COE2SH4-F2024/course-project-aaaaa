@@ -57,13 +57,6 @@ void GetInput(void)
 
 void RunLogic(void)
 {
-    char input = gameMechs->getInput();
-
-    if (input == 27) { //Exit game if ESC key is pressed
-        gameMechs->setExitTrue();
-    }
-    //Add other input processing
-
     player->updatePlayerDir();
     player->movePlayer();
 
