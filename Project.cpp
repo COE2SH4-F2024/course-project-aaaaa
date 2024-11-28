@@ -59,8 +59,6 @@ void RunLogic(void)
 {
     player->updatePlayerDir();
     player->movePlayer();
-
-    gameMechs->clearInput();
 }
 
 void DrawScreen(void)
