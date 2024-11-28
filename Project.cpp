@@ -43,7 +43,7 @@ void Initialize(void)
 {
     MacUILib_init();
     MacUILib_clearScreen();
-
+    
     gameMechs = new GameMechs();
     player = new Player(gameMechs);
 }
@@ -64,6 +64,9 @@ void RunLogic(void)
     }
     //Add other input processing
 
+    player->updatePlayerDir();
+    player->movePlayer();
+
     gameMechs->clearInput();
 }
 
@@ -71,15 +74,23 @@ void DrawScreen(void)
 {
     MacUILib_clearScreen();
 
+    MacUILib_printf("Score: %d\n", gameMechs->getScore());
+
     int rowNum = gameMechs->getBoardSizeY();
     int colNum = gameMechs->getBoardSizeX();
 
     //Need to add player and food objects
+    
+    objPos playerPosition = player->getPlayerPos(); //gets player position
 
     for (int row = 0; row < rowNum; row++) {
         for (int col = 0; col < colNum; col++) {
             if (row == 0 || row == rowNum - 1 || col == 0 || col == colNum - 1) {
                 MacUILib_printf("#");
+            }
+            else if (row == playerPosition.pos->y && col == playerPosition.pos->x)
+            {
+                MacUILib_printf("%c", playerPosition.getSymbol()); //draws the player '*'
             }
             //Add snake body
             //Add items
