@@ -46,12 +46,24 @@ void Initialize(void)
     
     gameMechs = new GameMechs();
     player = new Player(gameMechs);
+
+    objPos playerPos = player->getPlayerPos();
+    gameMechs->generateFood(playerPos);
 }
 
 void GetInput(void)
 {
-    if (MacUILib_hasChar()) {
-        gameMechs->setInput(MacUILib_getChar());
+    if (MacUILib_hasChar()) 
+    {
+        char input = MacUILib_getChar();
+        gameMechs->setInput(input);
+
+        //THIS IS TO TEST THAT FOOD CAN BE GENERATED RANDOMLY AROUND THE BOARD
+        if (input == 'f') 
+        {
+            objPos playerPos = player->getPlayerPos();
+            gameMechs->generateFood(playerPos);
+        }
     }
 }
 
@@ -73,19 +85,23 @@ void DrawScreen(void)
     //Need to add player and food objects
     
     objPos playerPosition = player->getPlayerPos(); //gets player position
+    objPos foodPosition = gameMechs->getFoodPos(); //gets food position
 
     for (int row = 0; row < rowNum; row++) {
         for (int col = 0; col < colNum; col++) {
             if (row == 0 || row == rowNum - 1 || col == 0 || col == colNum - 1) {
                 MacUILib_printf("#");
             }
+            //Add snake body
             else if (row == playerPosition.pos->y && col == playerPosition.pos->x)
             {
                 MacUILib_printf("%c", playerPosition.getSymbol()); //draws the player '*'
             }
-            //Add snake body
             //Add items
-
+            else if (row == foodPosition.pos->y && col == foodPosition.pos->x) 
+            {
+                MacUILib_printf("%c", foodPosition.getSymbol());
+            }
             else MacUILib_printf(" "); //temporary: replace when adding snake body and items
 
         }

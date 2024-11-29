@@ -11,6 +11,8 @@ GameMechs::GameMechs()
     boardSizeY = 15;
 
     //Add food
+    srand(static_cast<unsigned>(time(0)));
+    foodPos.setObjPos(0, 0, 'O');
 }
 
 GameMechs::GameMechs(int boardX, int boardY)
@@ -24,6 +26,8 @@ GameMechs::GameMechs(int boardX, int boardY)
     boardSizeY = boardY;
 
     //Add food
+    srand(static_cast<unsigned>(time(0)));
+    foodPos.setObjPos(0, 0, 'O');
 }
 
 // do you need a destructor?
@@ -56,6 +60,24 @@ int GameMechs::getScore() const
 void GameMechs::incrementScore()
 {
     score++;
+}
+
+void GameMechs::generateFood(const objPos& blockOff)
+{
+    int x, y;
+
+    do
+    {
+        x = rand() % (boardSizeX - 2) + 1;
+        y = rand() % (boardSizeY - 2) + 1;
+    } while (x == blockOff.pos->x && y == blockOff.pos->y);
+
+    foodPos.setObjPos(x, y, 'O');
+}
+
+objPos GameMechs::getFoodPos() const
+{
+    return foodPos;
 }
 
 int GameMechs::getBoardSizeX() const
