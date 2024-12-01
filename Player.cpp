@@ -1,6 +1,6 @@
 #include "Player.h"
 
-Player::Player(GameMechs* thisGMRef)
+Player::Player(GameMechs* thisGMRef, int startSize)
 {
     mainGameMechsRef = thisGMRef;
 
@@ -10,7 +10,14 @@ Player::Player(GameMechs* thisGMRef)
     int startX = boardX/2;
     int startY = boardY/2;
 
-    playerPos.setObjPos(startX, startY, '*');
+    playerPosList = new objPosArrayList();
+
+    playerPosList->insertHead(objPos(startX, startY, '*'));
+
+    for (int i = 1; i < startSize; i++) { //Inserts tails to start length
+        playerPosList->insertTail(objPos(startX-i, startY, '*'));
+    }
+    
 
     myDir = STOP;
 
@@ -20,12 +27,12 @@ Player::Player(GameMechs* thisGMRef)
 
 Player::~Player()
 {
-    // delete any heap members here
+    delete playerPosList;
 }
 
-objPos Player::getPlayerPos() const
+objPosArrayList* Player::getPlayerPos() const
 {
-    return playerPos;
+    return playerPosList;
 }
 
 void Player::updatePlayerDir()
@@ -51,7 +58,7 @@ void Player::updatePlayerDir()
             break;
 
         case 'a':
-            if (myDir == STOP || myDir == UP || myDir == DOWN)
+            if (myDir == UP || myDir == DOWN)
             {
                 myDir = LEFT;
             }
@@ -65,6 +72,7 @@ void Player::updatePlayerDir()
             break;
 
         case 27:
+            mainGameMechsRef->setLoseFlag();
             mainGameMechsRef->setExitTrue();
             break;
 
@@ -80,8 +88,9 @@ void Player::movePlayer()
     int boardX = mainGameMechsRef->getBoardSizeX();
     int boardY = mainGameMechsRef->getBoardSizeY();
 
-    int playerX = playerPos.pos->x;
-    int playerY = playerPos.pos->y;
+    //Gets coordinates of head
+    int playerX = playerPosList->getElement(0).pos->x;
+    int playerY = playerPosList->getElement(0).pos->y;
 
     switch (myDir)
     {
@@ -124,8 +133,32 @@ void Player::movePlayer()
     }
 
     //update player's position
-    playerPos.setObjPos(playerX, playerY, '*');
+    if (myDir != STOP) {
+        
+        if(!checkSelfCollision(playerX, playerY)) {
+            //update player's position
+            playerPosList->insertHead(objPos(playerX, playerY, '*'));
+            playerPosList->removeTail();
+        }
+        else {
+            mainGameMechsRef->setLoseFlag();
+            mainGameMechsRef->setExitTrue();
+        }
+    }
     
 }
 
-// More methods to be added
+bool Player::checkSelfCollision(int x, int y) {
+    bool selfCollision = false;
+
+    for (int i = 1; i < playerPosList->getSize(); i++) { //starts from 1 to avoid checking head
+            Pos* segmentPos = playerPosList->getElement(i).getObjPos().pos;
+
+            if (segmentPos->x == x && segmentPos->y == y) {
+                selfCollision = true;
+                break;
+            }
+        }
+
+    return selfCollision;
+}

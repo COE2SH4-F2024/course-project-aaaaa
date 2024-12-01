@@ -62,15 +62,25 @@ void GameMechs::incrementScore()
     score++;
 }
 
-void GameMechs::generateFood(const objPos& blockOff)
+void GameMechs::generateFood(const objPosArrayList& blockOff)
 {
     int x, y;
+    bool isOverlap;
 
     do
     {
+        isOverlap = false;
+
         x = rand() % (boardSizeX - 2) + 1;
         y = rand() % (boardSizeY - 2) + 1;
-    } while (x == blockOff.pos->x && y == blockOff.pos->y);
+
+        for (int i = 0; i < blockOff.getSize(); i++) {
+            if (x == blockOff.getElement(i).pos->x && y == blockOff.getElement(i).pos->y) {
+                isOverlap = true;
+            }
+        }
+
+    } while (isOverlap);
 
     foodPos.setObjPos(x, y, 'O');
 }

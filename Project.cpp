@@ -43,12 +43,14 @@ void Initialize(void)
 {
     MacUILib_init();
     MacUILib_clearScreen();
+
+    int startSize = 5; //Starting length of snake
     
     gameMechs = new GameMechs();
-    player = new Player(gameMechs);
+    player = new Player(gameMechs, startSize);
 
-    objPos playerPos = player->getPlayerPos();
-    gameMechs->generateFood(playerPos);
+    objPosArrayList* playerPosList = player->getPlayerPos();
+    gameMechs->generateFood(*playerPosList);
 }
 
 void GetInput(void)
@@ -61,8 +63,8 @@ void GetInput(void)
         //THIS IS TO TEST THAT FOOD CAN BE GENERATED RANDOMLY AROUND THE BOARD
         if (input == 'f') 
         {
-            objPos playerPos = player->getPlayerPos();
-            gameMechs->generateFood(playerPos);
+            objPosArrayList* playerPosList = player->getPlayerPos();
+            gameMechs->generateFood(*playerPosList);
         }
     }
 }
@@ -84,7 +86,7 @@ void DrawScreen(void)
 
     //Need to add player and food objects
     
-    objPos playerPosition = player->getPlayerPos(); //gets player position
+    objPosArrayList* playerPosList = player->getPlayerPos(); //gets player position
     objPos foodPosition = gameMechs->getFoodPos(); //gets food position
 
     for (int row = 0; row < rowNum; row++) {
@@ -92,17 +94,29 @@ void DrawScreen(void)
             if (row == 0 || row == rowNum - 1 || col == 0 || col == colNum - 1) {
                 MacUILib_printf("#");
             }
-            //Add snake body
-            else if (row == playerPosition.pos->y && col == playerPosition.pos->x)
-            {
-                MacUILib_printf("%c", playerPosition.getSymbol()); //draws the player '*'
-            }
-            //Add items
+            //Add FOod
             else if (row == foodPosition.pos->y && col == foodPosition.pos->x) 
-            {
-                MacUILib_printf("%c", foodPosition.getSymbol());
+                {
+                    MacUILib_printf("%c", foodPosition.getSymbol());
+                }
+            else {
+                bool isSegment = false;
+                
+                //Add snake body
+                for (int i = 0; i < playerPosList->getSize(); i++) { //checks if the current tile contains one of the snake's segments
+                    objPos segmentPos = playerPosList->getElement(i);
+
+                    if (row == segmentPos.pos->y && col == segmentPos.pos->x) { 
+                        MacUILib_printf("%c", segmentPos.getSymbol());
+                        isSegment = true;
+                        break;
+                    }
+                }
+                
+                if (!isSegment) {
+                    MacUILib_printf(" ");
+                }
             }
-            else MacUILib_printf(" "); //temporary: replace when adding snake body and items
 
         }
         MacUILib_printf("\n");
@@ -121,11 +135,11 @@ void CleanUp(void)
 
     if (!gameMechs->getLoseFlagStatus()) {
         //Win screen (finish later)
-        MacUILib_printf("Win screen");
+        MacUILib_printf("You have won!\nScore: %d", gameMechs->getScore());
     }
     else {
         //Lose screen (finish later)
-        MacUILib_printf("Lose screen");
+        MacUILib_printf("You have lose!\nScore: %d", gameMechs->getScore());
     }
     
     //Delete objects from the heap
