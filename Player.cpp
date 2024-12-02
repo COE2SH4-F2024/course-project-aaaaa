@@ -134,7 +134,6 @@ void Player::movePlayer()
 
     //update player's position
     if (myDir != STOP) {
-        
         if(!checkSelfCollision(playerX, playerY)) {
             //update player's position
             playerPosList->insertHead(objPos(playerX, playerY, '*'));
@@ -144,25 +143,26 @@ void Player::movePlayer()
             mainGameMechsRef->setLoseFlag();
             mainGameMechsRef->setExitTrue();
         }
+
+        objPos foodPos = mainGameMechsRef->getFoodPos();
+        bool grew = false;
+
+        playerPosList->insertTail(objPos(playerX, playerY, '*'));
+
+        if (playerX == foodPos.pos->x && playerY == foodPos.pos->y) 
+        {
+            mainGameMechsRef->incrementScore();
+            mainGameMechsRef->generateFood(*playerPosList);
+            grew = true;
+        } 
+
+        if (!grew)
+        {
+            playerPosList->removeTail();
+        }
     }
 
-    objPos foodPos = mainGameMechsRef->getFoodPos();
-    bool grew = false;
-
-    if (playerX == foodPos.pos->x && playerY == foodPos.pos->y) 
-    {
-        playerPosList->insertHead(objPos(playerX, playerY, '*'));
-        mainGameMechsRef->incrementScore();
-        mainGameMechsRef->generateFood(*playerPosList);
-        grew = true;
-    } else 
-    {
-        playerPosList->insertHead(objPos(playerX, playerY, '*'));
-    }
-    if (!grew)
-    {
-        playerPosList->removeTail();
-    }
+    
 }
 
 bool Player::checkSelfCollision(int x, int y) {
