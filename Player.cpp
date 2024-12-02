@@ -145,6 +145,24 @@ void Player::movePlayer()
             mainGameMechsRef->setExitTrue();
         }
     }
+
+    objPos foodPos = mainGameMechsRef->getFoodPos();
+    bool grew = false;
+
+    if (playerX == foodPos.pos->x && playerY == foodPos.pos->y) 
+    {
+        playerPosList->insertHead(objPos(playerX, playerY, '*'));
+        mainGameMechsRef->incrementScore();
+        mainGameMechsRef->generateFood(*playerPosList);
+        grew = true;
+    } else 
+    {
+        playerPosList->insertHead(objPos(playerX, playerY, '*'));
+    }
+    if (!grew)
+    {
+        playerPosList->removeTail();
+    }
 }
 
 bool Player::checkSelfCollision(int x, int y) {
