@@ -139,7 +139,7 @@ void CleanUp(void)
     }
     else {
         //Lose screen (finish later)
-        MacUILib_printf("You have lose!\nScore: %d", gameMechs->getScore());
+        MacUILib_printf("You have lost!\nScore: %d", gameMechs->getScore());
     }
     
     //Delete objects from the heap

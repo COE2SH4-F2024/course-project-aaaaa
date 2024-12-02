@@ -145,7 +145,6 @@ void Player::movePlayer()
             mainGameMechsRef->setExitTrue();
         }
     }
-    
 }
 
 bool Player::checkSelfCollision(int x, int y) {
