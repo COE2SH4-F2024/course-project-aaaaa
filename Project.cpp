@@ -44,7 +44,7 @@ void Initialize(void)
     MacUILib_init();
     MacUILib_clearScreen();
 
-    int startSize = 3; //Starting length of snake
+    int startSize = 1; //Starting length of snake
     
     gameMechs = new GameMechs();
     player = new Player(gameMechs, startSize);
