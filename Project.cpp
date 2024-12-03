@@ -6,12 +6,13 @@
 
 using namespace std;
 
-#define DELAY_CONST 100000
+#define DELAY_CONST 100000 
 
+//global pointers
 GameMechs* gameMechs; //pointer to GameMechs object
 Player* player; //pointer to Player object
 
-
+//function prototypes
 void Initialize(void);
 void GetInput(void);
 void RunLogic(void);
@@ -46,9 +47,11 @@ void Initialize(void)
 
     int startSize = 1; //Starting length of snake
     
+    //initializes game mechanics and player objects
     gameMechs = new GameMechs();
     player = new Player(gameMechs, startSize);
 
+    //generates the first food (not overlaping with the player)
     objPosArrayList* playerPosList = player->getPlayerPos();
     gameMechs->generateFood(*playerPosList);
 }
@@ -57,20 +60,22 @@ void GetInput(void)
 {
     if (MacUILib_hasChar()) 
     {
+        //checks for user input
         char input = MacUILib_getChar();
         gameMechs->setInput(input);
 
-        //THIS IS TO TEST THAT FOOD CAN BE GENERATED RANDOMLY AROUND THE BOARD
-        if (input == 'f') 
-        {
-            objPosArrayList* playerPosList = player->getPlayerPos();
-            gameMechs->generateFood(*playerPosList);
-        }
+        //THIS IS TO TEST THAT FOOD CAN BE GENERATED RANDOMLY AROUND THE BOARD(NOT ON THE PLAYER)
+        //if (input == 'f') 
+        //{
+        //    objPosArrayList* playerPosList = player->getPlayerPos();
+        //    gameMechs->generateFood(*playerPosList);
+        //}
     }
 }
 
 void RunLogic(void)
 {
+    //updates players direction and position
     player->updatePlayerDir();
     player->movePlayer();
 }
@@ -79,41 +84,50 @@ void DrawScreen(void)
 {
     MacUILib_clearScreen();
 
-    MacUILib_printf("Score: %d\n", gameMechs->getScore());
+    MacUILib_printf("Score: %d\n", gameMechs->getScore());  //displays score
 
-    int rowNum = gameMechs->getBoardSizeY();
-    int colNum = gameMechs->getBoardSizeX();
+    int rowNum = gameMechs->getBoardSizeY();    
+    int colNum = gameMechs->getBoardSizeX();    
 
     //Need to add player and food objects
-    
     objPosArrayList* playerPosList = player->getPlayerPos(); //gets player position
     objPos foodPosition = gameMechs->getFoodPos(); //gets food position
 
-    for (int row = 0; row < rowNum; row++) {
-        for (int col = 0; col < colNum; col++) {
-            if (row == 0 || row == rowNum - 1 || col == 0 || col == colNum - 1) {
-                MacUILib_printf("#");
+    //loops through each cell of the game board
+    for (int row = 0; row < rowNum; row++) 
+    {
+        for (int col = 0; col < colNum; col++) 
+        {
+            if (row == 0 || row == rowNum - 1 || col == 0 || col == colNum - 1) 
+            {
+                MacUILib_printf("#");   //draws the outline
             }
+
             //Add FOod
             else if (row == foodPosition.pos->y && col == foodPosition.pos->x) 
                 {
                     MacUILib_printf("%c", foodPosition.getSymbol());
                 }
-            else {
+
+            else 
+            {
                 bool isSegment = false;
                 
-                //Add snake body
-                for (int i = 0; i < playerPosList->getSize(); i++) { //checks if the current tile contains one of the snake's segments
+                //Add snake body - checks if the current tile contains one of the snake's segments
+                for (int i = 0; i < playerPosList->getSize(); i++) 
+                { 
                     objPos segmentPos = playerPosList->getElement(i);
 
-                    if (row == segmentPos.pos->y && col == segmentPos.pos->x) { 
-                        MacUILib_printf("%c", segmentPos.getSymbol());
+                    if (row == segmentPos.pos->y && col == segmentPos.pos->x) 
+                    { 
+                        MacUILib_printf("%c", segmentPos.getSymbol());  //draws snake segment
                         isSegment = true;
                         break;
                     }
                 }
                 
-                if (!isSegment) {
+                if (!isSegment) 
+                {
                     MacUILib_printf(" ");
                 }
             }
