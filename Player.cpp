@@ -59,7 +59,7 @@ void Player::updatePlayerDir()
             break;
 
         case 'a':   //left
-            if (myDir == UP || myDir == DOWN)
+            if (myDir == UP || myDir == DOWN) //Cannot move left when STOP in case the snake starSize is greater than 1
             {
                 myDir = LEFT;
             }
@@ -92,8 +92,8 @@ void Player::movePlayer()
     int boardY = mainGameMechsRef->getBoardSizeY();
 
     //Gets coordinates of head
-    int playerX = playerPosList->getElement(0).pos->x;
-    int playerY = playerPosList->getElement(0).pos->y;
+    int playerX = playerPosList->getHeadElement().pos->x;
+    int playerY = playerPosList->getHeadElement().pos->y;
 
     //updates the position based on the direction
     switch (myDir)
