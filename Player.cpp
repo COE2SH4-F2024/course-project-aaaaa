@@ -137,7 +137,6 @@ void Player::movePlayer()
         if(!checkSelfCollision(playerX, playerY)) {
             //update player's position
             playerPosList->insertHead(objPos(playerX, playerY, '*'));
-            playerPosList->removeTail();
         }
         else {
             mainGameMechsRef->setLoseFlag();
@@ -146,8 +145,6 @@ void Player::movePlayer()
 
         objPos foodPos = mainGameMechsRef->getFoodPos();
         bool grew = false;
-
-        playerPosList->insertTail(objPos(playerX, playerY, '*'));
 
         if (playerX == foodPos.pos->x && playerY == foodPos.pos->y) 
         {
