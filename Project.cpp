@@ -135,6 +135,7 @@ void DrawScreen(void)
         }
         MacUILib_printf("\n");
     }
+    MacUILib_printf("Press ESC to end game.");
 }
 
 void LoopDelay(void)
